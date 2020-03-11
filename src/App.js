@@ -1,14 +1,37 @@
-import React from 'react';
-import './App.css';
+import React from 'react'
+import './App.css'
+import calculateOdds from './calculateOdds'
 
-const houseWinningsForA = bets => bets.b - bets.a
-const houseWinningsForB = bets => bets.a - bets.b
+const calculateWinAmount = bets => (
+  bets.reduce((acc, cur) => (
+    acc + cur.amount * (cur.odds.numerator / cur.odds.denominator)
+  ), 0)
+)
+
+const calculateLossAmount = bets => (
+  bets.reduce((acc, cur) => (
+    acc + cur.amount * (cur.odds.denominator / cur.odds.numerator)
+  ), 0)
+)
+
+const houseWinningsForA = book => calculateWinAmount(book.a) - calculateLossAmount(book.b)
+const houseWinningsForB = book => calculateWinAmount(book.b) - calculateLossAmount(book.a)
+
+const sumAmount = bets => bets.reduce((total, bet) => total + bet.amount, 0)
 
 function App() {
-  const [bets, setBets] = React.useState({a: 0, b: 0})
+  const [book, setBook] = React.useState({ a: [], b: [] })
+  const [odds, setOdds] = React.useState({
+    a: { numerator: 1, denominator: 1 }, 
+    b: { numerator: 1, denominator: 1 },
+  })
 
-  const betOnA = () => setBets({...bets, a: bets.a + 1})
-  const betOnB = () => setBets({...bets, b: bets.b + 1})
+  React.useEffect(() => {
+    setOdds(calculateOdds(book))
+  }, [book])
+
+  const betOnA = () => setBook({ ...book, a: [...book.a, { amount: 1, odds: odds.a }] })
+  const betOnB = () => setBook({ ...book, b: [...book.b, { amount: 1, odds: odds.b }] })
 
   return (
     <div className="App">
@@ -19,25 +42,27 @@ function App() {
         <section className="App-bet-section">
           <h2>Bet</h2>
           <div className="App-bet-grid">
+            <p>{odds.a.numerator}:{odds.a.denominator}</p>
+            <p>{odds.b.numerator}:{odds.b.denominator}</p>
             <button className="App-button" onClick={betOnA}>A</button>
             <button className="App-button" onClick={betOnB}>B</button>
-            <p>${bets.a}</p>
-            <p>${bets.b}</p>
+            <p>${sumAmount(book.a)}</p>
+            <p>${sumAmount(book.b)}</p>
           </div>
         </section>
         <section>
           <h2>Outcomes</h2>
           <dl>
             <dt>If A wins the house wins:</dt>
-            <dd>${houseWinningsForA(bets)}</dd>
+            <dd>${houseWinningsForA(book).toFixed(2)}</dd>
 
             <dt>If B wins the house has:</dt>
-            <dd>${houseWinningsForB(bets)}</dd>
+            <dd>${houseWinningsForB(book).toFixed(2)}</dd>
           </dl>
         </section>
       </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

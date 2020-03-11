@@ -29,6 +29,7 @@
 }
 
 .App-button {
+  background-color: transparent;
   font-size: 24px;
   padding: 8px 32px;
   margin: 16px;
