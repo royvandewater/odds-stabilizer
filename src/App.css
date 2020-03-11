@@ -35,7 +35,8 @@
   margin: 16px;
 }
 
-.App-bet-section {
+.App-bet-section,
+.App-outcome-section {
   display: flex;
   flex-direction: column; 
   align-items: center;
@@ -45,6 +46,26 @@
   max-width: 400px;
   display: grid;
   grid-template-columns: auto auto;
+}
+
+.App-outcome-section {
+  background-color: #282c34;
+  color: white;
+}
+
+.App-outcome-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  max-width: 400px;
+}
+
+.App-outcome-grid dt {
+  text-align: left;
+}
+
+.App-outcome-grid dd {
+  text-align: right;
+  font-weight: bold;
 }
 
 @keyframes App-logo-spin {

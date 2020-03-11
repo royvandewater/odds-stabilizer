@@ -8,16 +8,10 @@ const calculateWinAmount = bets => (
   ), 0)
 )
 
-const calculateLossAmount = bets => (
-  bets.reduce((acc, cur) => (
-    acc + cur.amount * (cur.odds.denominator / cur.odds.numerator)
-  ), 0)
-)
-
-const houseWinningsForA = book => calculateWinAmount(book.a) - calculateLossAmount(book.b)
-const houseWinningsForB = book => calculateWinAmount(book.b) - calculateLossAmount(book.a)
-
 const sumAmount = bets => bets.reduce((total, bet) => total + bet.amount, 0)
+
+const houseWinningsForA = book => -1 * (calculateWinAmount(book.a) - sumAmount(book.b))
+const houseWinningsForB = book => -1 * (calculateWinAmount(book.b) - sumAmount(book.a))
 
 function App() {
   const [book, setBook] = React.useState({ a: [], b: [] })
@@ -50,9 +44,9 @@ function App() {
             <p>${sumAmount(book.b)}</p>
           </div>
         </section>
-        <section>
+        <section className="App-outcome-section">
           <h2>Outcomes</h2>
-          <dl>
+          <dl className="App-outcome-grid">
             <dt>If A wins the house wins:</dt>
             <dd>${houseWinningsForA(book).toFixed(2)}</dd>
 
