@@ -10,6 +10,14 @@ import sumPayout from './sumPayout'
 const houseWinningsForA = book => sumCost(book.b) - sumPayout(book.a)
 const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
 
+const BetButton = styled.button`
+  background-color: transparent;
+  border: solid 1px #282c34;
+  font-size: 24px;
+  padding: 8px 32px;
+  margin: 16px;
+`
+
 const SectionBets = styled.section`
   display: flex;
   flex-direction: column;
@@ -20,6 +28,11 @@ const BetsGrid = styled.div`
   display: grid;
   grid-template-columns: max-content max-content;
   grid-column-gap: 8px;
+
+  @media (max-width: 400px) {
+    grid-template-columns: max-content;
+    grid-row-gap: 8px;
+  }
 `
 
 const App = () => {
@@ -44,10 +57,18 @@ const App = () => {
           <div className="App-bet-grid">
             <p>{odds.a.cost}:{odds.a.payout}</p>
             <p>{odds.b.cost}:{odds.b.payout}</p>
-            <button className="App-button" onClick={betOnA}>A</button>
-            <button className="App-button" onClick={betOnB}>B</button>
-            <p>${sumCost(book.a)}</p>
-            <p>${sumCost(book.b)}</p>
+            <BetButton onClick={betOnA}>A</BetButton>
+            <BetButton onClick={betOnB}>B</BetButton>
+            <div>
+              <h5>Pot A</h5>
+              <p>${sumCost(book.a)}</p>
+            </div>
+
+            <div>
+              <h5>Pot B</h5>
+              <p>${sumCost(book.b)}</p>
+            </div>
+
           </div>
         </section>
         <section className="App-outcome-section">
