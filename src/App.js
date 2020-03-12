@@ -1,24 +1,30 @@
 import React from 'react'
+import styled from '@emotion/styled'
+
 import './App.css'
+import Bets from './Bets'
 import calculateOdds from './calculateOdds'
+import sumCost from './sumCost'
+import sumPayout from './sumPayout'
 
-const calculateWinAmount = bets => (
-  bets.reduce((acc, cur) => (
-    acc + cur.amount * (cur.odds.numerator / cur.odds.denominator)
-  ), 0)
-)
+const houseWinningsForA = book => sumCost(book.b) - sumPayout(book.a)
+const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
 
-const sumAmount = bets => bets.reduce((total, bet) => total + bet.amount, 0)
+const SectionBets = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
-const houseWinningsForA = book => -1 * (calculateWinAmount(book.a) - sumAmount(book.b))
-const houseWinningsForB = book => -1 * (calculateWinAmount(book.b) - sumAmount(book.a))
+const BetsGrid = styled.div`
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 8px;
+`
 
-function App() {
+const App = () => {
   const [book, setBook] = React.useState({ a: [], b: [] })
-  const [odds, setOdds] = React.useState({
-    a: { numerator: 1, denominator: 1 }, 
-    b: { numerator: 1, denominator: 1 },
-  })
+  const [odds, setOdds] = React.useState(calculateOdds(book))
 
   React.useEffect(() => {
     setOdds(calculateOdds(book))
@@ -36,12 +42,12 @@ function App() {
         <section className="App-bet-section">
           <h2>Bet</h2>
           <div className="App-bet-grid">
-            <p>{odds.a.numerator}:{odds.a.denominator}</p>
-            <p>{odds.b.numerator}:{odds.b.denominator}</p>
+            <p>{odds.a.cost}:{odds.a.payout}</p>
+            <p>{odds.b.cost}:{odds.b.payout}</p>
             <button className="App-button" onClick={betOnA}>A</button>
             <button className="App-button" onClick={betOnB}>B</button>
-            <p>${sumAmount(book.a)}</p>
-            <p>${sumAmount(book.b)}</p>
+            <p>${sumCost(book.a)}</p>
+            <p>${sumCost(book.b)}</p>
           </div>
         </section>
         <section className="App-outcome-section">
@@ -54,6 +60,12 @@ function App() {
             <dd>${houseWinningsForB(book).toFixed(2)}</dd>
           </dl>
         </section>
+        <SectionBets>
+          <BetsGrid>
+            <Bets name="A" bets={book.a} />
+            <Bets name="B" bets={book.b} />
+          </BetsGrid>
+        </SectionBets>
       </main>
     </div>
   )

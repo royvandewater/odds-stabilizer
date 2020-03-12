@@ -10,8 +10,8 @@ describe('calculateOdds', () => {
 
     it('should return even odds', () => {
       expect(odds).toEqual({ 
-        a: { numerator: 1, denominator: 1 },
-        b: { numerator: 1, denominator: 1 }, 
+        a: { cost: 1, payout: 1 },
+        b: { cost: 1, payout: 1 }, 
       })
     })
   })
@@ -21,15 +21,15 @@ describe('calculateOdds', () => {
 
     beforeEach(() => {
       odds = calculateOdds({ 
-        a: [{ amount: 1, odds: { numerator: 1, denominator: 1 } }], 
+        a: [{ amount: 1, odds: { cost: 1, payout: 1 } }], 
         b: [], 
       })
     })
 
-    it('should give a 2:1 odds and b 1:2 odds', () => {
+    it('should give a 2:1 odds and b 1:1 odds', () => {
       expect(odds).toEqual({ 
-        a: { numerator: 2, denominator: 1 },
-        b: { numerator: 1, denominator: 2 }, 
+        a: { cost: 2, payout: 1 },
+        b: { cost: 1, payout: 1 }, 
       })
     })
   })
@@ -39,15 +39,15 @@ describe('calculateOdds', () => {
 
     beforeEach(() => {
       odds = calculateOdds({ 
-        a: [{ amount: 1, odds: { numerator: 1, denominator: 1 } }], 
-        b: [{ amount: 1, odds: { numerator: 1, denominator: 2 } }], 
+        a: [{ amount: 1, odds: { cost: 1, payout: 1 } }], // payout $1
+        b: [{ amount: 1, odds: { cost: 1, payout: 2 } }], // payout $1.50
       })
     })
 
     xit('should give a ?:? odds and b ?:? odds', () => {
       expect(odds).toEqual({ 
-        a: { numerator: 2, denominator: 1 },
-        b: { numerator: 1, denominator: 2 }, 
+        a: { cost: 2, payout: 1 },
+        b: { cost: 1, payout: 2 }, 
       })
     })
   })
