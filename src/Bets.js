@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 
 import styled from '@emotion/styled'
 
-import calculatePayout from './utils/calculatePayout'
-import sumPayout from './utils/sumPayout'
+import calculatePayout from 'utils/calculatePayout'
+import sumPayout from 'utils/sumPayout'
 
 
 const TD = styled.td`
