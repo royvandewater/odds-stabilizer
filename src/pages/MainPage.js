@@ -2,9 +2,9 @@ import React from 'react'
 import styled from '@emotion/styled'
 
 import Bets from '../Bets'
-import calculateOdds from '../calculateOdds'
-import sumCost from '../sumCost'
-import sumPayout from '../sumPayout'
+import calculateOdds from '../utils/calculateOdds'
+import sumCost from '../utils/sumCost'
+import sumPayout from '../utils/sumPayout'
 import { Link } from 'react-router-dom'
 import SettingsIcon from '../SettingsIcon'
 
