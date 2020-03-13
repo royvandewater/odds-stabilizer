@@ -1,12 +1,12 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import { Link } from 'react-router-dom'
 
-import Bets from '../Bets'
+import Bets from 'components/Bets'
+import SettingsIcon from 'images/SettingsIcon'
 import calculateOdds from 'utils/calculateOdds'
 import sumCost from 'utils/sumCost'
 import sumPayout from 'utils/sumPayout'
-import { Link } from 'react-router-dom'
-import SettingsIcon from '../SettingsIcon'
 
 const houseWinningsForA = book => sumCost(book.b) - sumPayout(book.a)
 const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
