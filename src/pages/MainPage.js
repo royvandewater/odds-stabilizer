@@ -3,6 +3,8 @@ import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
 
 import Bets from 'components/Bets'
+import Header from 'components/Header'
+import Layout from 'components/Layout'
 import SettingsIcon from 'images/SettingsIcon'
 import calculateOdds from 'utils/calculateOdds'
 import sumCost from 'utils/sumCost'
@@ -11,28 +13,12 @@ import sumPayout from 'utils/sumPayout'
 const houseWinningsForA = book => sumCost(book.b) - sumPayout(book.a)
 const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
 
-const Layout = styled.div`
-  text-align: center;
-`
-
 const H1 = styled.h1`
   margin: 0;
 `
 
 const H2 = styled.h2`
   margin: 0;
-`
-
-const Header = styled.header`
-  background-color: #282c34;
-  min-height: 25vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  position: relative;
 `
 
 const BetButton = styled.button`
