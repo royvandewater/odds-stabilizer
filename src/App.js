@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
 
-import './App.css'
 import Bets from './Bets'
 import calculateOdds from './calculateOdds'
 import sumCost from './sumCost'
@@ -9,6 +8,29 @@ import sumPayout from './sumPayout'
 
 const houseWinningsForA = book => sumCost(book.b) - sumPayout(book.a)
 const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
+
+const Wrapper = styled.div`
+  text-align: center;
+`
+
+const H1 = styled.h1`
+  margin: 0;
+`
+
+const H2 = styled.h2`
+  margin: 0;
+`
+
+const Header = styled.header`
+  background-color: #282c34;
+  min-height: 25vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+`
 
 const BetButton = styled.button`
   background-color: transparent;
@@ -18,20 +40,56 @@ const BetButton = styled.button`
   margin: 16px;
 `
 
-const SectionBets = styled.section`
+const Section = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 32px 8px;
+
+  h2 {
+    margin-bottom: 16px;
+  }
 `
 
-const BetsGrid = styled.div`
+const SectionOutcome = styled(Section)`
+  background-color: #282c34;
+  color: white;
+`
+
+const BetGrid = styled.div`
+  max-width: 400px;
+  display: grid;
+  grid-template-columns: auto auto;
+`
+
+const OutcomeGrid = styled.div`
+  display: grid;
+  grid-template-columns: auto auto;
+  max-width: 400px;
+
+  dt {
+    text-align: left;
+  }
+
+  dd {
+    text-align: right;
+    font-weight: bold;
+  }
+`
+
+const BookGrid = styled.div`
   display: grid;
   grid-template-columns: max-content max-content;
   grid-column-gap: 8px;
 
   @media (max-width: 400px) {
     grid-template-columns: max-content;
-    grid-row-gap: 8px;
+    grid-row-gap: 4px;
+
+    > :not(:last-of-type) {
+      padding-bottom: 16px;
+      border-bottom: solid 1px #000;
+    }
   }
 `
 
@@ -47,14 +105,14 @@ const App = () => {
   const betOnB = () => setBook({ ...book, b: [...book.b, { amount: 1, odds: odds.b }] })
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Odds Stabilizer</h1>
-      </header>
+    <Wrapper>
+      <Header>
+        <H1>Odds Stabilizer</H1>
+      </Header>
       <main>
-        <section className="App-bet-section">
-          <h2>Bet</h2>
-          <div className="App-bet-grid">
+        <Section>
+          <H2>Bet</H2>
+          <BetGrid>
             <p>{odds.a.cost}:{odds.a.payout}</p>
             <p>{odds.b.cost}:{odds.b.payout}</p>
             <BetButton onClick={betOnA}>A</BetButton>
@@ -69,26 +127,26 @@ const App = () => {
               <p>${sumCost(book.b)}</p>
             </div>
 
-          </div>
-        </section>
-        <section className="App-outcome-section">
-          <h2>Outcomes</h2>
-          <dl className="App-outcome-grid">
+          </BetGrid>
+        </Section>
+        <SectionOutcome>
+          <H2>Outcomes</H2>
+          <OutcomeGrid>
             <dt>If A wins the house wins:</dt>
             <dd>${houseWinningsForA(book).toFixed(2)}</dd>
 
             <dt>If B wins the house has:</dt>
             <dd>${houseWinningsForB(book).toFixed(2)}</dd>
-          </dl>
-        </section>
-        <SectionBets>
-          <BetsGrid>
+          </OutcomeGrid>
+        </SectionOutcome>
+        <Section>
+          <BookGrid>
             <Bets name="A" bets={book.a} />
             <Bets name="B" bets={book.b} />
-          </BetsGrid>
-        </SectionBets>
+          </BookGrid>
+        </Section>
       </main>
-    </div>
+    </Wrapper>
   )
 }
 
