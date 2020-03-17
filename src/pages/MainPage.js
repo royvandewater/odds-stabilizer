@@ -11,8 +11,8 @@ import sumPayout from 'utils/sumPayout'
 const houseWinningsForA = book => sumCost(book.b) - sumPayout(book.a)
 const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
 
-
 const H2 = styled.h2`
+  font-size: 24px;
   margin: 0;
 `
 
@@ -38,6 +38,15 @@ const Section = styled.section`
 const SectionOutcome = styled(Section)`
   background-color: #282c34;
   color: white;
+`
+
+const SectionError = styled(Section)`
+  background-color: #ff0000;
+  color: white;
+
+  pre {
+    text-align: left;
+  }
 `
 
 const BetGrid = styled.div`
@@ -97,6 +106,26 @@ const defaultSettings = {
   },
 }
 
+class OddsFnError extends Error {
+  constructor(message, odds) {
+    super()
+    this.message = message
+    this.odds = odds
+  }
+}
+
+const assertOddsValid = odds => {
+  if (!odds.a) throw new OddsFnError('odds calculation function did not return a value for "a"', odds) 
+  if (typeof odds.a.cost !== 'number') throw new OddsFnError('odds calculation function did not return a number for "a.cost"', odds) 
+  if (typeof odds.a.payout !== 'number') throw new OddsFnError('odds calculation function did not return a number for "a.payout"', odds) 
+
+  if (!odds.b) throw new OddsFnError('odds calculation function did not return a value for "b"', odds) 
+  if (typeof odds.b.cost !== 'number') throw new OddsFnError('odds calculation function did not return a number for "b.cost"', odds) 
+  if (typeof odds.b.payout !== 'number') throw new OddsFnError('odds calculation function did not return a number for "b.payout"', odds) 
+}
+
+
+
 const MainPage = () => {
   const [settings, setSettings] = React.useState(defaultSettings)
   const [book, setBook] = React.useState({ a: [], b: [] })
@@ -105,12 +134,14 @@ const MainPage = () => {
 
   React.useEffect(() => {
     try {
-      setOdds(settings.calculateOdds(book, { fraction, sumPayout }))
+      const newOdds = settings.calculateOdds(book, { fraction, sumPayout }) 
+      assertOddsValid(newOdds)
+      setOdds(newOdds)
       setError(null)
     } catch (e) {
       setError(e)
     }
-  }, [book, settings.calculateOdds])
+  }, [book, settings])
 
   const betOnA = () => setBook({ ...book, a: [...book.a, { amount: 1, odds: odds.a }] })
   const betOnB = () => setBook({ ...book, b: [...book.b, { amount: 1, odds: odds.b }] })
@@ -119,7 +150,12 @@ const MainPage = () => {
     <Layout>
       <SettingsHeader settings={settings} setSettings={setSettings} />
       <main>
-        {error && <Section><h2>Execution Error</h2><p>{error.message}</p></Section>}
+        {error && (
+          <SectionError>
+            <h2>Execution Error</h2>
+            <p>{error.message}</p>
+            {error.odds && <pre>{JSON.stringify(error.odds, null, 2)}</pre>}
+          </SectionError>)}
         <Section>
           <H2>Bet</H2>
           <BetGrid>

@@ -10,6 +10,7 @@ const H1 = styled.h1`
   margin: 0;
 `
 
+
 const SettingsButton = styled.button`
   color: white;
   text-decoration: none;
@@ -42,8 +43,20 @@ const Settings = styled.div(({ open }) => `
   }
 `)
 
-const Error = styled.p`
-  color: red;
+const SettingsError = styled.div`
+  background-color: #ff0000;
+  color: white;
+  width: 100vw;
+  padding: 32px 8px;
+
+  h2 {
+    font-size: 24px;
+    margin: 0;
+  }
+
+  p {
+    font-size: 16px;
+  }
 `
 
 const formatFunction = (fn) => {
@@ -58,6 +71,7 @@ const SettingsHeader = ({ settings, setSettings }) => {
 
   const setCalculateOdds = debounce(value => {
     try {
+      // eslint-disable-next-line
       const calculateOdds = new Function(value)
       setError(null)
       setSettings({ ...settings, calculateOdds })
@@ -68,7 +82,7 @@ const SettingsHeader = ({ settings, setSettings }) => {
 
   React.useEffect(() => {
     setCalculateOdds(calcFnStr)
-  }, [calcFnStr])
+  }, [calcFnStr, setCalculateOdds])
 
   return (<Header>
     <SettingsButton onClick={() => setOpen(!open)}>
@@ -81,8 +95,13 @@ const SettingsHeader = ({ settings, setSettings }) => {
         id="caluclate-odds-fn" 
         value={calcFnStr} 
         onChange={event => setCalcFnStr(event.currentTarget.value) } />
-      {error && <Error>Syntax Error: {error.message}</Error>}
     </Settings>
+    {error && (
+      <SettingsError>
+        <h2>Syntax Error</h2>
+        <p>{error.message}</p>
+      </SettingsError>
+    )}
   </Header>)
 }
 
