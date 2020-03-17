@@ -75,7 +75,7 @@ return {
   a: { cost: f.fraction.numerator, payout: f.fraction.denominator },
   b: { cost: f.fraction.denominator, payout: f.fraction.numerator },
 }
-`
+`.trim()
 
 const SettingsHeader = ({ settings, setSettings }) => {
   const [open, setOpen] = React.useState(false)
