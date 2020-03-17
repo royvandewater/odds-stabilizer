@@ -1,21 +1,16 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { Link } from 'react-router-dom'
+import fraction from 'fraction-calculator'
 
 import Bets from 'components/Bets'
-import Header from 'components/Header'
 import Layout from 'components/Layout'
-import SettingsIcon from 'images/SettingsIcon'
-import calculateOdds from 'utils/calculateOdds'
+import SettingsHeader from 'components/SettingsHeader'
 import sumCost from 'utils/sumCost'
 import sumPayout from 'utils/sumPayout'
 
 const houseWinningsForA = book => sumCost(book.b) - sumPayout(book.a)
 const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
 
-const H1 = styled.h1`
-  margin: 0;
-`
 
 const H2 = styled.h2`
   margin: 0;
@@ -82,21 +77,30 @@ const BookGrid = styled.div`
   }
 `
 
-const SettingsLink = styled(Link)`
-  color: white;
-  text-decoration: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 8px;
-`
+const defaultSettings = {
+  calculateOdds: function() {
+    const [book, { fraction, sumPayout }] = arguments
+    if (book.a.length === 0 || book.b.length === 0) return { a: { cost: 1, payout: 1 }, b: { cost: 1, payout: 1 } } 
+
+    const sumAPayout = sumPayout(book.a)
+    const sumBPayout = sumPayout(book.b)
+
+    const f = fraction(sumAPayout, sumBPayout)
+
+    return ({
+      a: { cost: f.fraction.numerator, payout: f.fraction.denominator },
+      b: { cost: f.fraction.denominator, payout: f.fraction.numerator },
+    })
+  },
+}
 
 const MainPage = () => {
+  const [settings, setSettings] = React.useState(defaultSettings)
   const [book, setBook] = React.useState({ a: [], b: [] })
-  const [odds, setOdds] = React.useState(calculateOdds(book))
+  const [odds, setOdds] = React.useState(settings.calculateOdds(book, { fraction, sumPayout }))
 
   React.useEffect(() => {
-    setOdds(calculateOdds(book))
+    setOdds(settings.calculateOdds(book, { fraction, sumPayout }))
   }, [book])
 
   const betOnA = () => setBook({ ...book, a: [...book.a, { amount: 1, odds: odds.a }] })
@@ -104,12 +108,7 @@ const MainPage = () => {
 
   return (
     <Layout>
-      <Header>
-        <SettingsLink to="/settings">
-          <SettingsIcon />
-        </SettingsLink>
-        <H1>Odds Stabilizer</H1>
-      </Header>
+      <SettingsHeader settings={settings} setSettings={setSettings} />
       <main>
         <Section>
           <H2>Bet</H2>

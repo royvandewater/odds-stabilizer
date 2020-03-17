@@ -1,4 +1,4 @@
-import sumPayout from './sumPayout'
+import sumPayout from 'utils/sumPayout'
 import fraction from 'fraction-calculator'
 
 const calculateOdds = bets => {
