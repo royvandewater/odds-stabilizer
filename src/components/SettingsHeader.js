@@ -59,14 +59,27 @@ const SettingsError = styled.div`
   }
 `
 
-const formatFunction = (fn) => {
-  const lines = fn.toString().split('\n')
-  return lines.splice(1, lines.length - 2).join('\n')
+const defaultCalcFnStr = `
+const [book, { fraction, sumPayout }] = arguments
+
+if (book.a.length === 0 || book.b.length === 0) {
+  return { a: { cost: 1, payout: 1 }, b: { cost: 1, payout: 1 } } 
 }
+
+const sumAPayout = sumPayout(book.a)
+const sumBPayout = sumPayout(book.b)
+
+const f = fraction(sumAPayout, sumBPayout)
+
+return {
+  a: { cost: f.fraction.numerator, payout: f.fraction.denominator },
+  b: { cost: f.fraction.denominator, payout: f.fraction.numerator },
+}
+`
 
 const SettingsHeader = ({ settings, setSettings }) => {
   const [open, setOpen] = React.useState(false)
-  const [calcFnStr, setCalcFnStr] = React.useState(formatFunction(settings.calculateOdds))
+  const [calcFnStr, setCalcFnStr] = React.useState(defaultCalcFnStr)
   const [error, setError] = React.useState(null)
 
   const setCalculateOdds = debounce(value => {

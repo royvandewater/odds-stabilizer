@@ -86,24 +86,13 @@ const BookGrid = styled.div`
   }
 `
 
+const defaultOdds = {
+  a: { cost: 1, payout: 1 }, 
+  b: { cost: 1, payout: 1 }, 
+}
+
 const defaultSettings = {
-  calculateOdds: function() {
-    const [book, { fraction, sumPayout }] = arguments
-
-    if (book.a.length === 0 || book.b.length === 0) {
-      return { a: { cost: 1, payout: 1 }, b: { cost: 1, payout: 1 } } 
-    }
-
-    const sumAPayout = sumPayout(book.a)
-    const sumBPayout = sumPayout(book.b)
-
-    const f = fraction(sumAPayout, sumBPayout)
-
-    return {
-      a: { cost: f.fraction.numerator, payout: f.fraction.denominator },
-      b: { cost: f.fraction.denominator, payout: f.fraction.numerator },
-    }
-  },
+  calculateOdds: () => Object.assign({}, defaultOdds),
 }
 
 class OddsFnError extends Error {
@@ -129,7 +118,7 @@ const assertOddsValid = odds => {
 const MainPage = () => {
   const [settings, setSettings] = React.useState(defaultSettings)
   const [book, setBook] = React.useState({ a: [], b: [] })
-  const [odds, setOdds] = React.useState({ a: { cost: 1, payout: 1 }, b: { cost: 1, payout: 1 } })
+  const [odds, setOdds] = React.useState(defaultOdds)
   const [error, setError] = React.useState(null)
 
   React.useEffect(() => {
