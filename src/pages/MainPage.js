@@ -80,28 +80,37 @@ const BookGrid = styled.div`
 const defaultSettings = {
   calculateOdds: function() {
     const [book, { fraction, sumPayout }] = arguments
-    if (book.a.length === 0 || book.b.length === 0) return { a: { cost: 1, payout: 1 }, b: { cost: 1, payout: 1 } } 
+
+    if (book.a.length === 0 || book.b.length === 0) {
+      return { a: { cost: 1, payout: 1 }, b: { cost: 1, payout: 1 } } 
+    }
 
     const sumAPayout = sumPayout(book.a)
     const sumBPayout = sumPayout(book.b)
 
     const f = fraction(sumAPayout, sumBPayout)
 
-    return ({
+    return {
       a: { cost: f.fraction.numerator, payout: f.fraction.denominator },
       b: { cost: f.fraction.denominator, payout: f.fraction.numerator },
-    })
+    }
   },
 }
 
 const MainPage = () => {
   const [settings, setSettings] = React.useState(defaultSettings)
   const [book, setBook] = React.useState({ a: [], b: [] })
-  const [odds, setOdds] = React.useState(settings.calculateOdds(book, { fraction, sumPayout }))
+  const [odds, setOdds] = React.useState({ a: { cost: 1, payout: 1 }, b: { cost: 1, payout: 1 } })
+  const [error, setError] = React.useState(null)
 
   React.useEffect(() => {
-    setOdds(settings.calculateOdds(book, { fraction, sumPayout }))
-  }, [book])
+    try {
+      setOdds(settings.calculateOdds(book, { fraction, sumPayout }))
+      setError(null)
+    } catch (e) {
+      setError(e)
+    }
+  }, [book, settings.calculateOdds])
 
   const betOnA = () => setBook({ ...book, a: [...book.a, { amount: 1, odds: odds.a }] })
   const betOnB = () => setBook({ ...book, b: [...book.b, { amount: 1, odds: odds.b }] })
@@ -110,6 +119,7 @@ const MainPage = () => {
     <Layout>
       <SettingsHeader settings={settings} setSettings={setSettings} />
       <main>
+        {error && <Section><h2>Execution Error</h2><p>{error.message}</p></Section>}
         <Section>
           <H2>Bet</H2>
           <BetGrid>

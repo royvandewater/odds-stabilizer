@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from '@emotion/styled'
+import { debounce } from 'debounce'
 
 import Header from 'components/Header'
 import SettingsIcon from 'images/SettingsIcon'
@@ -41,13 +42,33 @@ const Settings = styled.div(({ open }) => `
   }
 `)
 
-const SettingsHeader = ({ settings, setSettings }) => {
-  const [open, setOpen] = React.useState(true)
+const Error = styled.p`
+  color: red;
+`
 
-  const setCalculateOdds = event => {
-    const calculateOdds = new Function(event.currentTarget.value)
-    setSettings({ ...settings, calculateOdds })
-  }
+const formatFunction = (fn) => {
+  const lines = fn.toString().split('\n')
+  return lines.splice(1, lines.length - 2).join('\n')
+}
+
+const SettingsHeader = ({ settings, setSettings }) => {
+  const [open, setOpen] = React.useState(false)
+  const [calcFnStr, setCalcFnStr] = React.useState(formatFunction(settings.calculateOdds))
+  const [error, setError] = React.useState(null)
+
+  const setCalculateOdds = debounce(value => {
+    try {
+      const calculateOdds = new Function(value)
+      setError(null)
+      setSettings({ ...settings, calculateOdds })
+    } catch (e) {
+      setError(e)
+    }
+  }, 1000)
+
+  React.useEffect(() => {
+    setCalculateOdds(calcFnStr)
+  }, [calcFnStr])
 
   return (<Header>
     <SettingsButton onClick={() => setOpen(!open)}>
@@ -56,7 +77,11 @@ const SettingsHeader = ({ settings, setSettings }) => {
     <H1>Odds Stabilizer</H1>
     <Settings open={open}>
       <label htmlFor="calculate-odds-fn">Odds calculation</label>
-      <textarea id="caluclate-odds-fn" value={settings.calculateOdds.toString()} onChange={setCalculateOdds} />
+      <textarea 
+        id="caluclate-odds-fn" 
+        value={calcFnStr} 
+        onChange={event => setCalcFnStr(event.currentTarget.value) } />
+      {error && <Error>Syntax Error: {error.message}</Error>}
     </Settings>
   </Header>)
 }
