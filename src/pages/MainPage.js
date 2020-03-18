@@ -3,7 +3,9 @@ import styled from '@emotion/styled'
 import fraction from 'fraction-calculator'
 
 import Bets from 'components/Bets'
+import Button from 'components/Button'
 import Layout from 'components/Layout'
+import ManualBet from 'components/ManualBet'
 import SettingsHeader from 'components/SettingsHeader'
 import sumCost from 'utils/sumCost'
 import sumPayout from 'utils/sumPayout'
@@ -14,14 +16,6 @@ const houseWinningsForB = book => sumCost(book.a) - sumPayout(book.b)
 const H2 = styled.h2`
   font-size: 24px;
   margin: 0;
-`
-
-const BetButton = styled.button`
-  background-color: transparent;
-  border: solid 1px #282c34;
-  font-size: 24px;
-  padding: 8px 32px;
-  margin: 16px;
 `
 
 const Section = styled.section`
@@ -47,12 +41,6 @@ const SectionError = styled(Section)`
   pre {
     text-align: left;
   }
-`
-
-const BetGrid = styled.div`
-  max-width: 400px;
-  display: grid;
-  grid-template-columns: auto auto;
 `
 
 const OutcomeGrid = styled.div`
@@ -86,6 +74,13 @@ const BookGrid = styled.div`
   }
 `
 
+const ToggleButton = styled(Button)`
+  ${({ value }) => value && `
+    background-color: #282c34;
+    color: white;
+  `}
+`
+
 const defaultOdds = {
   a: { cost: 1, payout: 1 }, 
   b: { cost: 1, payout: 1 }, 
@@ -113,13 +108,12 @@ const assertOddsValid = odds => {
   if (typeof odds.b.payout !== 'number') throw new OddsFnError('odds calculation function did not return a number for "b.payout"', odds) 
 }
 
-
-
 const MainPage = () => {
   const [settings, setSettings] = React.useState(defaultSettings)
   const [book, setBook] = React.useState({ a: [], b: [] })
   const [odds, setOdds] = React.useState(defaultOdds)
   const [error, setError] = React.useState(null)
+  const [autoBet, setAutoBet] = React.useState(false)
 
   React.useEffect(() => {
     try {
@@ -147,22 +141,14 @@ const MainPage = () => {
           </SectionError>)}
         <Section>
           <H2>Bet</H2>
-          <BetGrid>
-            <p>{odds.a.cost}:{odds.a.payout}</p>
-            <p>{odds.b.cost}:{odds.b.payout}</p>
-            <BetButton onClick={betOnA}>A</BetButton>
-            <BetButton onClick={betOnB}>B</BetButton>
-            <div>
-              <h5>Pot A</h5>
-              <p>${sumCost(book.a)}</p>
-            </div>
-
-            <div>
-              <h5>Pot B</h5>
-              <p>${sumCost(book.b)}</p>
-            </div>
-
-          </BetGrid>
+          <ToggleButton 
+            value={autoBet}
+            onClick={() => setAutoBet(!autoBet)} >
+              Auto Bet
+          </ToggleButton>
+          {autoBet 
+            ? <h2>Auto Bet coming soon™</h2>
+            : <ManualBet betOnA={betOnA} betOnB={betOnB} book={book} odds={odds} />}
         </Section>
         <SectionOutcome>
           <H2>Outcomes</H2>
