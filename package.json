@@ -9,7 +9,7 @@
     "@testing-library/react": "10.0.1",
     "@testing-library/user-event": "10.0.0",
     "debounce": "1.2.0",
-    "fraction-calculator": "1.0.12",
+    "fraction-calculator": "1.0.14",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-router-dom": "5.1.2",
